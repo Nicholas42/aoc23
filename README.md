@@ -7,6 +7,7 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 | Day | Language |
 | --- | -------- |
 | 1   | sed      |
+| 2   | awk      |
 
 ## Technical Details
 
