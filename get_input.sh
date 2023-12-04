@@ -20,5 +20,6 @@ part1:
 .PHONY: part2
 part2:
 
+.NOTPARALLEL:
 EOF
 fi

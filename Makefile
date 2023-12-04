@@ -2,3 +2,4 @@
 dec*:
 	$(MAKE) -C $@
 
+.NOTPARALLEL:

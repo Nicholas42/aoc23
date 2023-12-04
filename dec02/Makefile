@@ -9,3 +9,5 @@ part1:
 .PHONY: part2
 part2:
 	./part2.awk input.txt
+
+.NOTPARALLEL:

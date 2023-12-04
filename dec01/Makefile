@@ -9,3 +9,5 @@ part1:
 .PHONY: part2
 part2:
 	./part2.sed input.txt
+
+.NOTPARALLEL:

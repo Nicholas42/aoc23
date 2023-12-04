@@ -10,3 +10,5 @@ part1:
 part2:
 	./part2.vim input.txt >& /dev/null
 	cat result_part2.txt
+
+.NOTPARALLEL:
