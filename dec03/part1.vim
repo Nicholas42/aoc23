@@ -5,10 +5,10 @@
 :b1
 
 " We want motions that can fail without stopping the macro
-:nmap _j :execute ":silent! normal j"
-:nmap _h :execute ":silent! normal h"
-:nmap _k :execute ":silent! normal k"
-:nmap _l :execute ":silent! normal l"
+:execute "nmap _j :silent! normal j\<CR>"
+:execute "nmap _k :silent! normal k\<CR>"
+:execute "nmap _h :silent! normal h\<CR>"
+:execute "nmap _l :silent! normal l\<CR>"
 
 :execute "let @h='/[^0-9]\\d\\+[^0-9]\<CR>ma_kml`ae_l_j\<C-v>`ly`aeme`alv`er.:b2\<CR>:silent! :norm pJJJ\<CR>o\<Esc>:b1\<CR>@h'"
 :execute "let @g='/^\\d\<CR>ma_kml`ae_l_j\<C-v>`ly`aver.:b2\<CR>:silent! :norm pJJJ\<CR>o\<Esc>:b1\<CR>@g'"
