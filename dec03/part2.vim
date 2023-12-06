@@ -20,27 +20,20 @@
 :execute "let @h='/*\<CR>ma_h_h_h_kml`a_l_l_l_j\<C-v>`ly`ar.:b2\<CR>pjlllma:%s/*/./g\<CR>`ar*:silent! :%s/^\\d[^0-9]/../\<CR>ggO.......\<Esc>gg'"
 :execute "let @a='@h:silent! :norm 10@j\<CR>@d@c@a'"
 
+
 :norm @a
+
 :e!
 :b4
-:v/\d\+ \d\+/d
+:silent! :v/\d\+ \d\+/d
 :execute "let @m='\"qyew\"wye0D:let @e=@q*@w\<CR>\"ep'"
 :%norm @m
 
-:execute "let @s='/\\%>1l^[^0]\\d\\d\\d\\d\\d\\d\<CR>1000000\<C-x>gg1000000\<C-a>@s'"
-:norm @s
-:execute "let @s='/\\%>1l^[^0]\\d\\d\\d\\d\\d\<CR>100000\<C-x>gg100000\<C-a>@s'"
-:norm @s
-:execute "let @s='/\\%>1l^[^0]\\d\\d\\d\\d\<CR>10000\<C-x>gg10000\<C-a>@s'"
-:norm @s
-:execute "let @s='/\\%>1l^[^0]\\d\\d\\d\<CR>1000\<C-x>gg1000\<C-a>@s'"
-:norm @s
-:execute "let @s='/\\%>1l^[^0]\\d\\d\<CR>100\<C-x>gg100\<C-a>@s'"
-:norm @s
-:execute "let @s='/\\%>1l^[^0]\\d\<CR>10\<C-x>gg10\<C-a>@s'"
-:norm @s
-:execute "let @s='/\\%>1l^[^0]\<CR>\<C-x>gg\<C-a>@s'"
-:norm @s
+:execute "let @s='/\\%>1l[1-9]$\<CR>\<C-x>gg\<C-a>''''@s'"
+:execute "let @t=':norm @s\<CR>:2,$s/0$//\<CR>ggf_hi_\<ESC>@t'"
+:norm ggA_
+:norm @t
 :2,$d
+:s/_//g
 :w! result_part2.txt
 :qa!

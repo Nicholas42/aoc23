@@ -1,4 +1,4 @@
-#!/bin/vim -u
+#!/bin/env -S vim -n -u
 
 :set hidden
 :enew
@@ -10,25 +10,23 @@
 :execute "nmap _h :silent! normal h\<CR>"
 :execute "nmap _l :silent! normal l\<CR>"
 
-:execute "let @h='/[^0-9]\\d\\+[^0-9]\<CR>ma_kml`ae_l_j\<C-v>`ly`aeme`alv`er.:b2\<CR>:silent! :norm pJJJ\<CR>o\<Esc>:b1\<CR>@h'"
-:execute "let @g='/^\\d\<CR>ma_kml`ae_l_j\<C-v>`ly`aver.:b2\<CR>:silent! :norm pJJJ\<CR>o\<Esc>:b1\<CR>@g'"
-:execute "let @j='/\\d\\+$\<CR>mah_kml`a$_j\<C-v>`ly`av$r.:b2\<CR>:silent! :norm pJJJ\<CR>o\<Esc>:b1\<CR>@j'"
+:execute "let @h='/[^0-9]\\d\<CR>ma_kml`ae_l_j\<C-v>`ly`aveolr.:b2\<CR>p`[v`]Jo\<Esc>:b1\<CR>@h'"
+:execute "let @g='/^\\d\<CR>ma_kml`ae_l_j\<C-v>`ly`aver.:b2\<CR>p`[v`]Jo\<Esc>:b1\<CR>@g'"
 
 :norm @h
 :norm @g
-:norm @j
+
 :e!
 :b2
 :%v/[^0-9 .]/d
 :%s/[^0-9]//g
 :g/^$/d
 
-:execute "let @u='/\\%>1l^[^0]\\d\\d\<CR>100\<C-x>gg100\<C-a>@u'"
-:norm @u
-:execute "let @t='/\\%>1l^[^0]\\d\<CR>10\<C-x>gg10\<C-a>@t'"
+:execute "let @s='/\\%>1l[1-9]$\<CR>\<C-x>gg\<C-a>''''@s'"
+:execute "let @t=':norm @s\<CR>:2,$s/0$//\<CR>ggf_hi_\<ESC>@t'"
+:norm ggA_
 :norm @t
-:execute "let @s='/\\%>1l^[^0]\<CR>\<C-x>gg\<C-a>@s'"
-:norm @s
 :2,$d
+:s/_//g
 :w! result_part1.txt
 :qa!
