@@ -11,6 +11,7 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 | 3   | vim      |
 | 4   | jq       |
 | 5   | perl     |
+| 6   | bc       |
 
 ## Technical Details
 
