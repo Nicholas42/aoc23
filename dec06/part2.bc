@@ -1,0 +1,20 @@
+#!/bin/env -S bc -l common.bc
+
+read_input();
+
+define concatenate_decimal(numbers[], len) {
+    auto result, dec_len, shifted, index;
+    result = 0;
+
+    for(index = 0; index < len; ++index) {
+        dec_len = length(numbers[index]);
+        result = result * 10^dec_len + numbers[index];
+    }
+
+    return result;
+}
+
+long_time = concatenate_decimal(times[], len);
+long_distance = concatenate_decimal(distances[], len);
+
+calculate_hold(long_time, long_distance);

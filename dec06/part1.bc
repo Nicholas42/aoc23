@@ -1,0 +1,12 @@
+#!/bin/env -S /bin/bc -l common.bc
+
+read_input();
+
+prod = 1;
+
+for(index = 0; index < len; ++index) {
+    prod *= calculate_hold(times[index], distances[index]);
+}
+
+prod;
+

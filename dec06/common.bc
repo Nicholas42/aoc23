@@ -1,0 +1,46 @@
+#!/bin/bc -l
+
+base_scale = scale;
+
+define floor(to_round) {
+    auto rounded;
+    scale = 0;
+    rounded = to_round / 1;
+    scale = base_scale;
+    return rounded;
+}
+
+define ceil(to_round) {
+    auto floored;
+    floored = floor(to_round);
+    if(floored != to_round) {
+        return floored + 1;
+    }
+
+    return floored;
+}
+
+define calculate_hold(time, distance) {
+    auto d, x1, x2;
+    d = sqrt(time^2 - 4 * distance);
+    x1 = ceil((time - d) / 2);
+    x2 = floor((time + d) / 2);
+    return x2 - x1 + 1;
+}
+
+# Sets times, distances and len
+define void read_input() {
+    auto tmp, time, distance_read;
+    time = read();
+    distance_read = 99999999;
+
+    for(tmp = read(); tmp != distance_read;  tmp = read()) {
+        times[index++] = tmp;
+    }
+
+    len = index;
+
+    for(index = 0; index < len; index++) {
+        distances[index] = read();
+    }
+}
