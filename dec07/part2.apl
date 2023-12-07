@@ -1,6 +1,6 @@
 #!/bin/env -S apl --noSV --script -f common.apl -f
 
-order ← 'AKQT98765432J'
+order ← 'J23456789TQKA'
 
 ∇R ← Count I;Js
     Js ← +/ 'J' = I
@@ -10,10 +10,10 @@ order ← 'AKQT98765432J'
 ∇
 
 data ← ReadFile
-cards ← ParseCards data
+cards ← CalculateKeys data
 vals ← ParseValues data
 
 ranks ← CalcRanks cards
-vals +.× ranks
+vals[ranks] +.× (⍳≢cards)
 
 )OFF

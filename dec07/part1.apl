@@ -1,16 +1,16 @@
 #!/bin/env -S apl --noSV --script -f common.apl -f
 
-order ← 'AKQJT98765432'
+order ← '23456789TJQKA'
 
 ∇R ← Count I
     R ← Sorted +/ (∪I) ∘.∊ I
 ∇
 
 input ← ReadFile
-cards ← ParseCards input
+cards ← CalculateKeys input
 vals ← ParseValues input
 
 ranks ← CalcRanks cards
-vals +.× ranks
+vals[ranks] +.× (⍳≢cards)
 
 )OFF
