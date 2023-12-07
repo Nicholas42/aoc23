@@ -9,7 +9,9 @@ Zero ← ⎕UCS '0'
 ∇
 
 ∇R ← ReadFile
-    R ← ⎕FIO[49] "input.txt"
+    index ← 1 + ⎕Arg ⍳ ⊂'--'
+    R ← ⎕FIO[49] ⊃⎕Arg[index]
+
 ∇
 
 ∇R ← Sorted I

@@ -13,6 +13,4 @@ vals ← ParseValues input
 ranks ← CalcRanks cards
 vals +.× ranks
 
-
-
 )OFF
