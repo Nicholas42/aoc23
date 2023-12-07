@@ -12,6 +12,7 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 | 4   | jq       |
 | 5   | perl     |
 | 6   | bc       |
+| 7   | gnu-apl  |
 
 ## Technical Details
 
