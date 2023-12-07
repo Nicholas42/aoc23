@@ -1,4 +1,4 @@
-#!/bin/env -S apl --script -f common.apl -f
+#!/bin/env -S apl --noSV --script -f common.apl -f
 
 order ← 'AKQT98765432J'
 
