@@ -4,13 +4,13 @@ all: part1 part2
 .PHONY: part1
 part1:
 	$(info Part 1:)
-	time ./part1.vim input.txt >& /dev/null
+	./part1.vim input.txt >& /dev/null
 	cat result_part1.txt
 
 .PHONY: part2
 part2:
 	$(info Part 2:)
-	time ./part2.vim input.txt >& /dev/null
+	./part2.vim input.txt >& /dev/null
 	cat result_part2.txt
 
 .NOTPARALLEL:
