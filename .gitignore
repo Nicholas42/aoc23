@@ -1,5 +1,5 @@
 aoc_cookie.txt
+*.history
 *.txt
-.*
 *.o
 *.elf
