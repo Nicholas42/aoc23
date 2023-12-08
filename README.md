@@ -4,15 +4,16 @@
 
 I plan to solve every day of this Advent of Code with a different programming/scripting language. The current solves are:
 
-| Day | Language |
-| --- | -------- |
-| 1   | sed      |
-| 2   | awk      |
-| 3   | vim      |
-| 4   | jq       |
-| 5   | perl     |
-| 6   | bc       |
-| 7   | gnu-apl  |
+| Day | Language          |
+| --- | ----------------- |
+| 1   | sed               |
+| 2   | awk               |
+| 3   | vim               |
+| 4   | jq                |
+| 5   | perl              |
+| 6   | bc                |
+| 7   | gnu-apl           |
+| 8   | assembly language |
 
 ## Technical Details
 
