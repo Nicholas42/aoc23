@@ -1,5 +1,5 @@
 -- vi: ft=sql
 
-.read 'read_input.sqlite'
+.read 'read_input.sql'
 
-.read 'calculation.sqlite'
+.read 'calculation.sql'

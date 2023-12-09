@@ -1,6 +1,6 @@
 -- vi: ft=sql
 
-.read 'read_input.sqlite'
+.read 'read_input.sql'
 
 WITH
 max_column(in_row, max_column)  AS (
@@ -10,4 +10,4 @@ UPDATE input
 SET column = max_column - column
 FROM (SELECT max_column FROM input JOIN max_column ON row = in_row);
 
-.read 'calculation.sqlite'
+.read 'calculation.sql'
