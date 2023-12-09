@@ -14,6 +14,7 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 | 6   | bc                |
 | 7   | gnu-apl           |
 | 8   | assembly language |
+| 9   | sql               |
 
 ## Technical Details
 
