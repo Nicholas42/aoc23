@@ -1,4 +1,4 @@
-#!/bin/vim -u
+#!/bin/env -S vim -n -u
 
 :set hidden
 :enew

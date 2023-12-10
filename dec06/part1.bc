@@ -1,4 +1,4 @@
-#!/bin/env -S /bin/bc -l common.bc
+#!/bin/env -S bc -l common.bc
 
 read_input();
 
