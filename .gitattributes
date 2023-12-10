@@ -1,1 +1,7 @@
+# This two-step will turn off detection in the project root
+* -linguist-detectable
+*/** linguist-detectable
+
+Makefile -linguist-detectable
+
 *.sql linguist-detectable
