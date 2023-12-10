@@ -4,18 +4,18 @@
 
 I plan to solve every day of this Advent of Code with a different programming/scripting language. The current solves are:
 
-| Day | Language          |
-| --- | ----------------- |
-| 1   | sed               |
-| 2   | awk               |
-| 3   | vim               |
-| 4   | jq                |
-| 5   | perl              |
-| 6   | bc                |
-| 7   | gnu-apl           |
-| 8   | assembly language |
-| 9   | sql               |
-| 10  | bash              |
+| Day | Language   | Share of code |
+| --- | ---------- | ------------- |
+| 1   | sed        | 7.08%         |
+| 2   | Awk        | 5.04%         |
+| 3   | Vim Script | 7.50%         |
+| 4   | jq         | 6.72%         |
+| 5   | Perl       | 14.26%        |
+| 6   | bc         | 6.34%         |
+| 7   | APL        | 4.74%         |
+| 8   | Assembly   | 23.70%        |
+| 9   | SQL        | 7.62%         |
+| 10  | Shell      | 16.95%        |
 
 ## Technical Details
 
