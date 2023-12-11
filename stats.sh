@@ -15,14 +15,14 @@ else
         echo 'gem install github-linguist'
         echo 'or build the docker image via'
         echo 'TEMP_DIR=$(mktemp -d)'
-        echo 'mit clone --depth 1 "https://github.com/github-linguist/linguist.git" $TEMP_DIR'
+        echo 'git clone --depth 1 "https://github.com/github-linguist/linguist.git" $TEMP_DIR'
         echo 'pushd $TEMP_DIR'
         echo 'docker build -t linguist:latest .'
         echo 'popd'
 
         exit 1
     fi
-    LINGUIST="docker run --rm -v $(pwd):$(pwd) -w $(pwd) -t linguist github-linguist"
+    LINGUIST="docker run --rm -v $(pwd):$(pwd) -w $(pwd) --user $(id -u) -t linguist github-linguist"
 fi
 
 BC=$(collect_manual bc -- **/*.bc)
