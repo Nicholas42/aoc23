@@ -1,0 +1,224 @@
+import io/args
+import immutable/list
+import mutable/array
+import io/async
+import text/string
+
+
+type Spring {
+  Good();
+  Bad();
+  Ugly()
+}
+
+def show(spring: Spring) : String = {
+  spring match {
+    case Good() => "."
+    case Bad() => "#"
+    case Ugly() => "?"
+  }
+}
+
+def show(sl : List[Spring]) : String = {
+  return sl.accumulate("") { (acc, elem) => acc ++ show(elem) }
+}
+
+effect Flip(): Boolean
+effect Fail[A](): A
+
+
+def splitL(str: String, sep: String): List[String] = str.split(sep).toListFixed()
+
+def headDefault[A](l: List[A], default: A): A = l match {
+  case Nil() => default
+  case Cons(a, rest) => a
+}
+
+def accumulate[A, B](l: List[A], acc: B){ op: (B, A) => B } : B = {
+  l match {
+    case Cons(x, xs) => accumulate(xs, op(acc, x)) { (b,a) => op(b,a) }
+    case _ => acc
+  }
+}
+
+record Problem (
+  springs: List[Spring],
+  sizes: List[Int]
+)
+
+def show(prob: Problem): String = {
+  val springs = prob.springs.show()
+  val sizes = prob.sizes.accumulate("") { (acc, elem) => acc ++ show(elem) ++ ", " }
+  return springs ++ " " ++ sizes
+}
+
+def collect[A, B](list:  List[A]) { f: A => Option[B] }: List[B] = {
+  list match {
+    case Cons(x, xs) =>
+      val foo = f(x) match {
+        case Some(a) => [a]
+        case None() =>[]
+      }
+      foo.append(collect(xs) { f })
+        case Nil() => []
+  }
+}
+
+def collect[A, B](arr:  Array[A]) { f: A => Option[B] }: Array[B] = {
+  val ret = emptyArray[B]()
+  each(0, arr.size()) { index =>
+    val mapped = f(arr.unsafeGet(index))
+    mapped match {
+      case Some(a) => put(ret, ret.size(), a)
+      case None() => ()
+    }
+  }
+  return ret
+}
+
+def toListFixed[T](arr: Array[T]): List[T] = {
+  var ret = Nil[T]()
+  val size = arr.size()
+  each(0, size) { index =>
+    ret = Cons(arr.unsafeGet(size - index - 1), ret)
+  }
+
+  return ret
+}
+
+def parseNumberList(str: String): List[Int] = {
+  val multiple = (str ++ ",").repeat(5)
+  return multiple.split(",").collect { inp => inp.toInt() }.toListFixed()
+}
+
+def parseSprings(str: String) : List[Spring] = {
+  val multiple = (str ++ "?").repeat(5)
+  multiple.split("").collect { char =>
+    if( char == ".") {
+      return Some(Good())
+    } else if( char == "#") {
+      return Some(Bad())
+    } else if( char == "?") {
+      return Some(Ugly())
+    } else {
+      return None()
+    }
+  }.toListFixed().reverse().drop(1).reverse()
+}
+
+def parseProblem(line: String): Option[Problem] = {
+  val parts = line.splitL(" ")
+  val ret = parts match {
+    case Cons(springs, Cons(numbers, Nil())) => Some(Problem(parseSprings(springs), parseNumberList(numbers)))
+    case _ => None()
+  }
+  return ret
+}
+
+def fitsGood(problem: Problem) : Option[List[Spring]] / Flip = {
+  problem match {
+    case Problem(Nil(), Nil()) => Some([])
+    case Problem(Cons(first, rest), numbers) =>
+      val good = first match {
+        case Good() => true
+        case Bad() => false
+        case Ugly() => do Flip()
+      }
+      if(good) {
+        fitsGood(Problem(rest, numbers)).map { l => Cons(Good(), l) }
+        } else {
+          fitsBad(Problem(rest, numbers), 1).map { l => Cons(Bad(), l) }
+        }
+
+        case _ => None()
+  }
+}
+
+def fitsBad(problem: Problem, badStreak: Int) : Option[List[Spring]] / Flip = {
+  problem match {
+    case Problem(Nil(), Nil()) => None()
+    case Problem(Nil(), Cons(streak, Nil())) => if(streak == badStreak) {Some([])} else {None()}
+
+    case Problem(Cons(first, rest), Cons(n, ns)) =>
+      val good = first match {
+        case Good() => true
+        case Bad() => false
+        case Ugly() => do Flip()
+      }
+      if(good && n == badStreak) {
+        fitsGood(Problem(rest, ns)).map { l => Cons(Good(), l) }
+        } else if( good.not() && badStreak < n) {
+          fitsBad(Problem(rest, Cons(n, ns)), badStreak + 1).map { l =>  Cons(Bad(), l) }
+          } else {
+            None()
+          }
+
+
+        case _ => None()
+  }
+}
+
+def consumeBad(l: List[Spring], number: Int) : List[Spring]/ Fail = {
+  if(number == 0) {
+    l match {
+      case Cons(Bad(), _) => do Fail()
+      case rem => rem.drop(1)
+    }
+
+    } else {
+      l match {
+        case Nil() => do Fail()
+        case Cons(Good(), _) => do Fail()
+        case Cons(_, rem) => consumeBad(rem, number - 1)
+      }
+    }
+}
+
+def test(problem: Problem) : Unit / {Flip, Fail} = {
+  problem match {
+    case Problem(Nil(), Nil()) => ()
+    case Problem(Nil(), _) => do Fail()
+
+    case Problem(Cons(Bad(), _), Nil()) => do Fail()
+    case Problem(Cons(foo, rem), Nil()) =>  test(Problem(rem, Nil()))
+
+    case Problem(Cons(spring, remSprings), Cons(n, ns)) =>
+      val good = spring match {
+        case Good() => true
+        case Bad() => false
+        case Ugly() => do Flip()
+      }
+
+      if(good) {
+        test(Problem(remSprings, Cons(n, ns)))
+      } else {
+        test(Problem(consumeBad(remSprings, n-1), ns))
+      }
+  }
+}
+
+def program(lines: List[String]) =  {
+  val problems = lines.collect{line => parseProblem(line)}
+  val result = problems.map { prob =>
+    try{
+      try {
+        test(prob)
+        1
+      } with Fail[A] { () => 0 }
+    }
+    with Flip { () => resume(true)+ resume(false) }
+  }.accumulate(0) { (l,r) => l+r}
+  println(result)
+}
+
+def main() = {
+  val args = commandLineArgs()
+  fork(box {
+    asyncIO(box {
+      program(args)
+    })
+  })
+
+}
+
+// vi: tabstop=2 commentstring=//%s
