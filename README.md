@@ -17,6 +17,8 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 | 9   | SQL        | 6.48%         |
 | 10  | Shell      | 14.41%        |
 | 11  | C          | 14.95%        |
+| 12  | Effekt     | unfinished    |
+| 13  | Ruby       | tbd           |
 
 ## Technical Details
 
