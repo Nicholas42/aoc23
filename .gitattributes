@@ -5,3 +5,4 @@
 Makefile -linguist-detectable
 
 *.sql linguist-detectable
+dec14/go.mod -linguist-detectable
