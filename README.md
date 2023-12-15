@@ -6,20 +6,21 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 
 | Day | Language   | Share of code |
 | --- | ---------- | ------------- |
-| 1   | sed        | 4.48%         |
-| 2   | Awk        | 3.19%         |
-| 3   | Vim Script | 4.75%         |
-| 4   | jq         | 4.25%         |
-| 5   | Perl       | 9.03%         |
-| 6   | bc         | 4.01%         |
-| 7   | APL        | 3.00%         |
-| 8   | Assembly   | 15.01%        |
-| 9   | SQL        | 4.82%         |
-| 10  | Shell      | 10.73%        |
-| 11  | C          | 11.13%        |
-| 12  | Effekt     | 10.80%        |
-| 13  | Ruby       | 6.32%         |
-| 14  | Go         | 8.24%         |
+| 1   | sed        | 4.13%         |
+| 2   | Awk        | 2.94%         |
+| 3   | Vim Script | 4.37%         |
+| 4   | jq         | 3.92%         |
+| 5   | Perl       | 8.31%         |
+| 6   | bc         | 3.69%         |
+| 7   | APL        | 2.76%         |
+| 8   | Assembly   | 13.83%        |
+| 9   | SQL        | 4.45%         |
+| 10  | Shell      | 9.88%         |
+| 11  | C          | 10.25%        |
+| 12  | Effekt     | 9.95%         |
+| 13  | Ruby       | 5.82%         |
+| 14  | Go         | 7.59%         |
+| 15  | Pascal     | 7.86%         |
 
 ## Technical Details
 
