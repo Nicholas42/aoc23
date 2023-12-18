@@ -4,3 +4,5 @@ aoc_cookie.txt
 *.o
 *.elf
 dec15/part?
+dec17/part?
+*.mod
