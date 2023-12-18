@@ -27,8 +27,6 @@ fi
 
 BC=$(collect_manual bc -- **/*.bc)
 
-RENAMED=$(jq --null-input -r '{Scala: "Effekt"}')
-
 $LINGUIST --json --breakdown |
     jq -r \
         '(. + ($ARGS.positional | add))
@@ -46,10 +44,10 @@ $LINGUIST --json --breakdown |
         )
         | to_entries
         | sort_by(.value.day)
-        | map("|\(.value.day) | \($renamed[.key] // .key) | \(.value.percentage)%|")
+        | map("|\(.value.day) | \($renamed[0][.key] // .key) | \(.value.percentage)%|")
         | ["|Day | Language | Share of code |", "| --- | --- | --- | --- |"] + .
         | .[]
         ' \
-         --argjson "renamed" "$RENAMED" \
+         --slurpfile "renamed" "languages.json" \
         --jsonargs "$BC"|
     prettier --parser markdown

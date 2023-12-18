@@ -1,0 +1,19 @@
+{
+  "sed": "[sed](https://www.gnu.org/software/sed/manual/sed.html)",
+  "Awk": "[awk](https://www.gnu.org/software/gawk/manual/gawk.html)",
+  "Vim Script": "[vim](https://www.vim.org/)",
+  "jq": "[jq](https://jqlang.github.io/jq/)",
+  "Perl": "[Perl](https://www.perl.org/)",
+  "bc": "[bc](https://www.gnu.org/software/bc/manual/html_chapter/bc_toc.html)",
+  "APL": "[GNU APL](https://www.gnu.org/software/apl/)",
+  "Assembly": "[asm](https://en.wikipedia.org/wiki/Assembly_language)",
+  "SQL": "[SQLite](https://www.sqlite.org/docs.html)",
+  "Shell": "[Bash](https://www.gnu.org/software/bash/manual/html_node/index.html)",
+  "C": "[C](https://www.open-std.org/jtc1/sc22/wg14/)",
+  "Scala": "[Effekt](https://effekt-lang.org/)",
+  "Ruby": "[Ruby](https://www.ruby-lang.org/en/)",
+  "Go": "[Go](https://go.dev/)",
+  "Pascal": "[Free Pascal](https://www.freepascal.org/)",
+  "Common Lisp": "[Common Lisp](https://lisp-lang.org/)",
+  "Fortran": "[Fortran](https://fortran-lang.org/)"
+}
