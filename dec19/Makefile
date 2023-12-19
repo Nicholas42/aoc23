@@ -9,6 +9,7 @@ part1:
 .PHONY: part2
 part2:
 	$(info Part 2:)
+	./part2.a68 input.txt
 
 .NOTPARALLEL:
 .SILENT:

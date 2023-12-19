@@ -16,5 +16,6 @@
   "Pascal": "[Free Pascal](https://www.freepascal.org/)",
   "Common Lisp": "[Common Lisp](https://lisp-lang.org/)",
   "Fortran": "[Fortran](https://fortran-lang.org/)",
-  "Elixir": "[Elixir](https://elixir-lang.org/docs.html)"
+  "Elixir": "[Elixir](https://elixir-lang.org/docs.html)",
+  "algol": "[ALGOL 68](https://en.wikipedia.org/wiki/ALGOL_68)"
 }

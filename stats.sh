@@ -26,6 +26,7 @@ else
 fi
 
 BC=$(collect_manual bc -- **/*.bc)
+ALGOL=$(collect_manual algol -- **/*.a68)
 
 $LINGUIST --json --breakdown |
     jq -r \
@@ -49,5 +50,5 @@ $LINGUIST --json --breakdown |
         | .[]
         ' \
          --slurpfile "renamed" "languages.json" \
-        --jsonargs "$BC"|
+        --jsonargs "$BC" "$ALGOL"|
     prettier --parser markdown

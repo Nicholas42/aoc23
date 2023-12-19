@@ -1,76 +1,23 @@
-#!/bin/env -S a68g --script #
+#!/bin/a68g --script #
 
 BEGIN
-  MODE CONDITION = STRUCT (CHAR attribute, BOOL lesser, INT value, STRING target);
   MODE VALUE = STRUCT (INT x, INT m, INT a, INT s);
-  MODE RULE = STRUCT (STRING name, FLEX [32] CONDITION conditions, STRING default target);
-
-  PROC read rules = (REF FILE inp) []RULE: BEGIN
-      BOOL go on := TRUE;
-      on value error(inp, (REF FILE f) BOOL: BEGIN go on := FALSE; TRUE END);
-      [1024] RULE rules;
-      make term(inp, "{:,<>}");
-      INT index := LWB rules;
-      WHILE
-        RULE rule;
-        INT cond index := LWB (conditions OF rule);
-        CHAR dummy;
-        get(inp,(name OF rule, dummy));
-        (name OF rule) NE ""
-      DO
-        STRING attribute;
-        WHILE
-          CONDITION cond;
-          get(inp, (attribute, dummy, value OF cond));
-          go on
-        DO
-          attribute OF cond := attribute[1];
-          lesser OF cond := dummy EQ "<";
-          get(inp, (dummy, target OF cond, dummy));
-          (conditions OF rule)[cond index] := cond;
-          cond index +:= 1
-        OD;
-        go on := TRUE;
-        default target OF rule := attribute;
-        [cond index-1] CONDITION tmp;
-        tmp[LWB tmp : cond index-1] := (conditions OF rule)[LWB (conditions OF rule) : cond index-1];
-        conditions OF rule := tmp;
-        rules[index] := rule;
-        index +:= 1
-      OD;
-      on value error(inp, (REF FILE f) BOOL: FALSE);
-      rules[LWB rules:index]
-  END;
-
-  PROC find rule = ([] RULE rules, STRING name) RULE: BEGIN
-    INT index := LWB rules;
-    WHILE
-      index < UPB rules AND (name OF rules[index]) NE name
-    DO
-      index +:= 1
-    OD;
-    rules[index]
-  END;
 
   PROC check condition = (CONDITION cond, VALUE value) BOOL: BEGIN
     CHAR at := attribute OF cond;
     INT val = ( at EQ "x" | x OF value |: at EQ "a" | a OF value |: at EQ "m" | m OF value | s OF value);
-
-
-    BOOL result = IF lesser OF cond THEN
+    IF lesser OF cond THEN
       val < (value OF cond)
     ELSE
       val > (value OF cond)
-    FI;
-    result
+    FI
   END;
 
   PROC process rule = (RULE rule, VALUE value) STRING: BEGIN
     INT index := LWB (conditions OF rule);
     WHILE
-    (index <= UPB (conditions OF rule)  | NOT check condition((conditions OF rule)[index], value) | FALSE)
+    (index <= UPB (conditions OF rule) | NOT check condition((conditions OF rule)[index], value) | FALSE)
     DO index +:= 1 OD;
-
 
     IF index <= UPB (conditions OF rule) THEN
       target OF (conditions OF rule)[index]
@@ -118,24 +65,9 @@ BEGIN
       sum
   END;
 
-  PROC run = (STRING input file name) VOID: BEGIN
-    INT solution = compute solution(input file name);
-    INT width = ENTIER(log(solution)) + 1;
-
-    printf(($n (width)d, l$, solution))
-  END;
-
-  FOR index FROM 1 TO argc
-  WHILE
-    IF argv(index) EQ "./part1.a68" THEN
-      run(argv(index + 1));
-      FALSE
-    ELSE
-      TRUE
-    FI
-  DO ~ OD
+  PR include "common.a68" PR
 END
 
 CO
-vi: ft= commentstring=#%s# tabstop=2 expandtab shiftwidth=2
+vi: commentstring=#%s# tabstop=2 expandtab shiftwidth=2
 CO

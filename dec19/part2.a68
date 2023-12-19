@@ -1,0 +1,130 @@
+#!/bin/a68g --script #
+
+BEGIN
+  MODE INTERVAL = STRUCT (INT min, INT max);
+  MODE MD_INTERVAL = STRUCT (INTERVAL x, INTERVAL m, INTERVAL a, INTERVAL s);
+
+  PROC split lower single= (REF INTERVAL interval, INT bound) INTERVAL : BEGIN
+    INTERVAL new interval = (min OF interval, bound);
+    min OF interval := bound;
+    new interval
+  END;
+
+  PROC split lower = (REF MD_INTERVAL interval, CHAR entry, INT bound) MD_INTERVAL : BEGIN
+    MD_INTERVAL copy := interval;
+    IF entry EQ "x" THEN
+      (x OF copy) := split lower single(x OF interval, bound)
+    ELIF entry EQ "m" THEN
+      (m OF copy) := split lower single(m OF interval, bound)
+    ELIF entry EQ "a" THEN
+      (a OF copy) := split lower single(a OF interval, bound)
+    ELSE
+      (s OF copy) := split lower single(s OF interval, bound)
+    FI;
+    copy
+  END;
+
+  PROC split upper single = (REF INTERVAL interval, INT bound) INTERVAL : BEGIN
+    INTERVAL new interval = (bound, max OF interval);
+    max OF interval := bound;
+    new interval
+  END;
+
+  PROC split upper = (REF MD_INTERVAL interval, CHAR entry, INT bound) MD_INTERVAL : BEGIN
+    MD_INTERVAL copy := interval;
+    IF entry EQ "x" THEN
+      (x OF copy) := split upper single(x OF interval, bound)
+    ELIF entry EQ "m" THEN
+      (m OF copy) := split upper single(m OF interval, bound)
+    ELIF entry EQ "a" THEN
+      (a OF copy) := split upper single(a OF interval, bound)
+    ELSE
+      (s OF copy) := split upper single(s OF interval, bound)
+    FI;
+    copy
+  END;
+
+  OP LENGTH_SINGLE = (INTERVAL interval) INT: (max OF interval) - (min OF interval);
+  OP IS_EMPTY_SINGLE = (INTERVAL interval) BOOL: (min OF interval) >= (max OF interval);
+
+  OP LENGTH = (MD_INTERVAL interval) INT: LENGTH_SINGLE x OF interval * LENGTH_SINGLE a OF interval * LENGTH_SINGLE m OF interval * LENGTH_SINGLE s OF interval;
+  OP IS_EMPTY = (MD_INTERVAL interval) BOOL: IS_EMPTY_SINGLE x OF interval OR IS_EMPTY_SINGLE a OF interval OR IS_EMPTY_SINGLE m OF interval OR IS_EMPTY_SINGLE s OF interval;
+
+
+  PROC has visited = (REF [] STRING visited, INT upper bound, STRING searched) BOOL: BEGIN
+    INT index := LWB visited;
+    WHILE
+      index < upper bound AND visited[index] NE searched
+    DO
+      index +:= 1
+    OD;
+    visited[index] EQ searched
+  END;
+
+  PROC recurse = ([] RULE rules, MD_INTERVAL interval, REF [] STRING visited, INT index) INT: BEGIN
+    INT sum := 0;
+    INT current index := index;
+    STRING current target = visited[current index];
+    RULE rule = find rule(rules, current target);
+    MD_INTERVAL current interval := interval;
+
+    FOR cond index FROM LWB (conditions OF rule) TO UPB (conditions OF rule)
+    WHILE NOT IS_EMPTY current interval
+    DO
+      CONDITION cond = (conditions OF rule)[cond index];
+      MD_INTERVAL sub;
+      IF lesser OF cond THEN
+         sub := split lower(current interval, attribute OF cond, value OF cond)
+      ELSE
+         sub := split upper(current interval, attribute OF cond, value OF cond + 1)
+      FI;
+
+      STRING target = target OF cond;
+
+      IF NOT IS_EMPTY sub THEN
+        IF target EQ "A" THEN
+          sum +:= LENGTH sub
+        ELIF (target NE "R") AND (NOT has visited(visited, current index, target)) THEN
+          current index +:= 1;
+          visited[current index] := target;
+          sum +:= recurse(rules, sub, visited, current index);
+          current index -:= 1
+        FI
+      FI
+    OD;
+
+    IF NOT IS_EMPTY current interval THEN
+      STRING target = default target OF rule;
+      IF target EQ "A" THEN
+        sum +:= LENGTH current interval
+      ELIF (target NE "R") AND (NOT has visited(visited, current index, target)) THEN
+        current index +:= 1;
+        visited[current index] := target;
+        sum +:= recurse(rules, current interval, visited, current index);
+        current index -:= 1
+      FI
+    FI;
+
+    sum
+  END;
+
+  PROC compute solution = (STRING input file name) INT: BEGIN
+      FILE inp;
+      INT opened = open(inp, input file name, stand in channel);
+      BOOL finished reading := opened > 0;
+      on logical file end (inp, (REF FILE f) BOOL: finished reading := TRUE);
+      [] RULE rules = read rules(inp);
+      close(inp);
+
+      [UPB rules] STRING visited;
+      visited[1] := "in";
+      MD_INTERVAL start interval = ((1, 4001), (1, 4001), (1, 4001), (1, 4001));
+      recurse(rules, start interval, visited, 1)
+  END;
+
+  PR include "common.a68" PR
+END
+
+CO
+vi: commentstring=#%s# tabstop=2 expandtab shiftwidth=2
+CO

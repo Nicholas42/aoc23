@@ -1,0 +1,64 @@
+#!/bin/a68g --script #
+
+MODE CONDITION = STRUCT (CHAR attribute, BOOL lesser, INT value, STRING target);
+MODE RULE = STRUCT (STRING name, FLEX [32] CONDITION conditions, STRING default target);
+
+PROC read rules = (REF FILE inp) []RULE: BEGIN
+    BOOL go on := TRUE;
+    on value error(inp, (REF FILE f) BOOL: BEGIN go on := FALSE; TRUE END);
+    [1024] RULE rules;
+    make term(inp, "{:,<>}");
+    INT index := LWB rules;
+    WHILE
+      RULE rule;
+      INT cond index := LWB (conditions OF rule);
+      CHAR dummy;
+      get(inp,(name OF rule, dummy));
+      (name OF rule) NE ""
+    DO
+      STRING attribute;
+      WHILE
+        CONDITION cond;
+        get(inp, (attribute, dummy, value OF cond));
+        go on
+      DO
+        attribute OF cond := attribute[1];
+        lesser OF cond := dummy EQ "<";
+        get(inp, (dummy, target OF cond, dummy));
+        (conditions OF rule)[cond index] := cond;
+        cond index +:= 1
+      OD;
+      go on := TRUE;
+      default target OF rule := attribute;
+      [cond index-1] CONDITION tmp;
+      tmp[LWB tmp : cond index-1] := (conditions OF rule)[LWB (conditions OF rule) : cond index-1];
+      conditions OF rule := tmp;
+      rules[index] := rule;
+      index +:= 1
+    OD;
+    on value error(inp, (REF FILE f) BOOL: FALSE);
+    rules[LWB rules:index]
+END;
+
+PROC find rule = ([] RULE rules, STRING name) RULE: BEGIN
+  INT index := LWB rules;
+  WHILE
+    index < UPB rules AND (name OF rules[index]) NE name
+  DO
+    index +:= 1
+  OD;
+  rules[index]
+END;
+
+PROC run = (STRING input file name) VOID: BEGIN
+  INT solution = compute solution(input file name);
+  INT width = ENTIER(log(solution)) + 1;
+
+  printf(($n (width)d, l$, solution))
+END;
+
+run(a68g argv(2))
+
+CO
+vi: commentstring=#%s# tabstop=2 expandtab shiftwidth=2
+CO
