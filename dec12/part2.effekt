@@ -1,6 +1,7 @@
 import io/args
 import immutable/list
 import mutable/array
+import mutable/map
 import io/async
 import text/string
 
@@ -115,99 +116,102 @@ def parseProblem(line: String): Option[Problem] = {
   return ret
 }
 
-def fitsGood(problem: Problem) : Option[List[Spring]] / Flip = {
-  problem match {
-    case Problem(Nil(), Nil()) => Some([])
-    case Problem(Cons(first, rest), numbers) =>
-      val good = first match {
-        case Good() => true
-        case Bad() => false
-        case Ugly() => do Flip()
-      }
-      if(good) {
-        fitsGood(Problem(rest, numbers)).map { l => Cons(Good(), l) }
-        } else {
-          fitsBad(Problem(rest, numbers), 1).map { l => Cons(Bad(), l) }
-        }
-
-        case _ => None()
-  }
-}
-
-def fitsBad(problem: Problem, badStreak: Int) : Option[List[Spring]] / Flip = {
-  problem match {
-    case Problem(Nil(), Nil()) => None()
-    case Problem(Nil(), Cons(streak, Nil())) => if(streak == badStreak) {Some([])} else {None()}
-
-    case Problem(Cons(first, rest), Cons(n, ns)) =>
-      val good = first match {
-        case Good() => true
-        case Bad() => false
-        case Ugly() => do Flip()
-      }
-      if(good && n == badStreak) {
-        fitsGood(Problem(rest, ns)).map { l => Cons(Good(), l) }
-        } else if( good.not() && badStreak < n) {
-          fitsBad(Problem(rest, Cons(n, ns)), badStreak + 1).map { l =>  Cons(Bad(), l) }
-          } else {
-            None()
-          }
-
-
-        case _ => None()
-  }
-}
-
-def consumeBad(l: List[Spring], number: Int) : List[Spring]/ Fail = {
+def consumeBad(l: List[Spring], number: Int, bad: Int, ugly: Int) : Tuple3[List[Spring], Int, Int]/ Fail = {
   if(number == 0) {
     l match {
-      case Cons(Bad(), _) => do Fail()
-      case rem => rem.drop(1)
+      case Nil() => (Nil(), bad, ugly)
+      case Cons(Ugly(), r) => (r, bad, ugly-1)
+      case Cons(Good(), r) => (r, bad, ugly)
+      case _ => do Fail()
     }
-
-    } else {
-      l match {
-        case Nil() => do Fail()
-        case Cons(Good(), _) => do Fail()
-        case Cons(_, rem) => consumeBad(rem, number - 1)
-      }
+  }
+  else {
+    l match {
+      case Nil() => do Fail()
+      case Cons(Good(), _) => do Fail()
+      case Cons(Bad(), rem) => consumeBad(rem, number - 1, bad - 1, ugly)
+      case Cons(Ugly(), rem) => consumeBad(rem, number - 1, bad, ugly - 1)
     }
+  }
 }
 
-def test(problem: Problem) : Unit / {Flip, Fail} = {
-  problem match {
-    case Problem(Nil(), Nil()) => ()
-    case Problem(Nil(), _) => do Fail()
+def recordFail(problem: Problem, cache: Map[String, Boolean]) : Unit / {Fail} = {
+  cache.update(show(problem), false)
+  do Fail()
+}
 
-    case Problem(Cons(Bad(), _), Nil()) => do Fail()
-    case Problem(Cons(foo, rem), Nil()) =>  test(Problem(rem, Nil()))
+def test(problem: Problem, cache: Map[String, Int], neededBad: Int, remBad: Int, remUgly: Int) : Int / {Flip, Fail} = {
+  if (neededBad > remBad + remUgly || neededBad < remBad) {
+    do Fail()
+  }
+  val key = show(problem)
+  get(cache, key) match {
+    case None() =>
+      problem match {
+        case Problem(Nil(), Nil()) => 1
+        case Problem(Nil(), _) => do Fail()
 
-    case Problem(Cons(spring, remSprings), Cons(n, ns)) =>
-      val good = spring match {
-        case Good() => true
-        case Bad() => false
-        case Ugly() => do Flip()
+        case Problem(Cons(Bad(), _), Nil()) => do Fail()
+        case Problem(_, Nil()) => 2^remUgly
+
+        case Problem(Cons(spring, remSprings), Cons(n, ns)) =>
+          val (good, minusBad, minusUgly) = spring match {
+            case Good() => (true, 0, 0)
+            case Bad() => (false, 1, 0)
+            case Ugly() => (do Flip(), 0, 1)
+          }
+
+            if(good) {
+              val next = Problem(remSprings,  Cons(n, ns))
+              val res = test(next ,cache, neededBad, remBad, remUgly - minusUgly)
+              cache.update(show(next), res)
+            } else {
+              val (springs, bad, ugly) = consumeBad(remSprings, n-1, remBad - minusBad, remUgly - minusUgly)
+              val next = Problem(springs, ns)
+              try {
+              test(next , cache, neededBad - n, bad, ugly)
+              } with Fail[A] { () => }
+              cache.update(show(next), true)
+            }
       }
+            case Some(v) => if(v) { () } else { () }
+  }
+}
 
-      if(good) {
-        test(Problem(remSprings, Cons(n, ns)))
-      } else {
-        test(Problem(consumeBad(remSprings, n-1), ns))
+def countKinds(l: List[Spring], good: Int, bad: Int, ugly: Int) : Tuple3[Int,Int,Int] = {
+  l match {
+    case Nil() => (good, bad, ugly)
+    case Cons(spring, r) =>
+      spring match {
+        case Good() => countKinds(r, good+1, bad, ugly)
+        case Bad() => countKinds(r, good, bad+1, ugly)
+        case Ugly() =>  countKinds(r, good, bad, ugly+1)
       }
   }
+}
+
+def calculate(prob: Problem): Int = {
+  try{
+    val (good, bad, ugly) = countKinds(prob.springs, 0, 0, 0)
+    val neededBad = prob.sizes.accumulate(0) { (l,r) => l+r }
+    try {
+      val map = emptyMap[String, Int]()
+      test(prob, map, neededBad, bad, ugly)
+      1
+    } with Fail[A] { () => 0 }
+  }
+  with Flip { () => resume(true)+ resume(false) }
 }
 
 def program(lines: List[String]) =  {
   val problems = lines.collect{line => parseProblem(line)}
   val result = problems.map { prob =>
-    try{
-      try {
-        test(prob)
-        1
-      } with Fail[A] { () => 0 }
-    }
-    with Flip { () => resume(true)+ resume(false) }
+    val foo = calculate(prob)
+
+    println(show(prob))
+    foo
   }.accumulate(0) { (l,r) => l+r}
+
   println(result)
 }
 
@@ -221,4 +225,4 @@ def main() = {
 
 }
 
-// vi: tabstop=2 commentstring=//%s
+// vi: tabstop=2 commentstring=//%s ft=scala
