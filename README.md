@@ -6,25 +6,26 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 
 | Day | Language                                                              | Share of code |
 | --- | --------------------------------------------------------------------- | ------------- |
-| 1   | [sed](https://www.gnu.org/software/sed/manual/sed.html)               | 2.56%         |
-| 2   | [awk](https://www.gnu.org/software/gawk/manual/gawk.html)             | 1.82%         |
-| 3   | [vim](https://www.vim.org/)                                           | 2.71%         |
-| 4   | [jq](https://jqlang.github.io/jq/)                                    | 2.43%         |
-| 5   | [Perl](https://www.perl.org/)                                         | 5.15%         |
-| 6   | [bc](https://www.gnu.org/software/bc/manual/html_chapter/bc_toc.html) | 2.29%         |
-| 7   | [GNU APL](https://www.gnu.org/software/apl/)                          | 1.71%         |
-| 8   | [asm](https://en.wikipedia.org/wiki/Assembly_language)                | 8.56%         |
-| 9   | [SQLite](https://www.sqlite.org/docs.html)                            | 2.75%         |
-| 10  | [Bash](https://www.gnu.org/software/bash/manual/html_node/index.html) | 6.12%         |
-| 11  | [C](https://www.open-std.org/jtc1/sc22/wg14/)                         | 6.35%         |
-| 12  | [Effekt](https://effekt-lang.org/)                                    | 15.11%        |
-| 13  | [Ruby](https://www.ruby-lang.org/en/)                                 | 3.61%         |
-| 14  | [Go](https://go.dev/)                                                 | 4.70%         |
-| 15  | [Free Pascal](https://www.freepascal.org/)                            | 4.87%         |
-| 16  | [Common Lisp](https://lisp-lang.org/)                                 | 5.05%         |
-| 17  | [Fortran](https://fortran-lang.org/)                                  | 8.89%         |
-| 18  | [Elixir](https://elixir-lang.org/docs.html)                           | 2.75%         |
-| 19  | [ALGOL 68](https://en.wikipedia.org/wiki/ALGOL_68)                    | 12.50%        |
+| 1   | [sed](https://www.gnu.org/software/sed/manual/sed.html)               | 2.39%         |
+| 2   | [awk](https://www.gnu.org/software/gawk/manual/gawk.html)             | 1.70%         |
+| 3   | [vim](https://www.vim.org/)                                           | 2.53%         |
+| 4   | [jq](https://jqlang.github.io/jq/)                                    | 2.27%         |
+| 5   | [Perl](https://www.perl.org/)                                         | 4.81%         |
+| 6   | [bc](https://www.gnu.org/software/bc/manual/html_chapter/bc_toc.html) | 2.14%         |
+| 7   | [GNU APL](https://www.gnu.org/software/apl/)                          | 1.60%         |
+| 8   | [asm](https://en.wikipedia.org/wiki/Assembly_language)                | 8.00%         |
+| 9   | [SQLite](https://www.sqlite.org/docs.html)                            | 2.57%         |
+| 10  | [Bash](https://www.gnu.org/software/bash/manual/html_node/index.html) | 5.72%         |
+| 11  | [C](https://www.open-std.org/jtc1/sc22/wg14/)                         | 5.93%         |
+| 12  | [Effekt](https://effekt-lang.org/)                                    | 14.11%        |
+| 13  | [Ruby](https://www.ruby-lang.org/en/)                                 | 3.37%         |
+| 14  | [Go](https://go.dev/)                                                 | 4.39%         |
+| 15  | [Free Pascal](https://www.freepascal.org/)                            | 4.55%         |
+| 16  | [Common Lisp](https://lisp-lang.org/)                                 | 4.72%         |
+| 17  | [Fortran](https://fortran-lang.org/)                                  | 8.31%         |
+| 18  | [Elixir](https://elixir-lang.org/docs.html)                           | 2.57%         |
+| 19  | [ALGOL 68](https://en.wikipedia.org/wiki/ALGOL_68)                    | 11.68%        |
+| 21  | [Kotlin](https://kotlinlang.org/)                                     | 6.58%         |
 
 ## Technical Details
 
