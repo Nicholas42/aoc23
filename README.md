@@ -6,26 +6,27 @@ I plan to solve every day of this Advent of Code with a different programming/sc
 
 | Day | Language                                                              | Share of code |
 | --- | --------------------------------------------------------------------- | ------------- |
-| 1   | [sed](https://www.gnu.org/software/sed/manual/sed.html)               | 2.39%         |
-| 2   | [awk](https://www.gnu.org/software/gawk/manual/gawk.html)             | 1.70%         |
-| 3   | [vim](https://www.vim.org/)                                           | 2.53%         |
-| 4   | [jq](https://jqlang.github.io/jq/)                                    | 2.27%         |
-| 5   | [Perl](https://www.perl.org/)                                         | 4.81%         |
-| 6   | [bc](https://www.gnu.org/software/bc/manual/html_chapter/bc_toc.html) | 2.14%         |
-| 7   | [GNU APL](https://www.gnu.org/software/apl/)                          | 1.60%         |
-| 8   | [asm](https://en.wikipedia.org/wiki/Assembly_language)                | 8.00%         |
-| 9   | [SQLite](https://www.sqlite.org/docs.html)                            | 2.57%         |
-| 10  | [Bash](https://www.gnu.org/software/bash/manual/html_node/index.html) | 5.72%         |
-| 11  | [C](https://www.open-std.org/jtc1/sc22/wg14/)                         | 5.93%         |
-| 12  | [Effekt](https://effekt-lang.org/)                                    | 14.11%        |
-| 13  | [Ruby](https://www.ruby-lang.org/en/)                                 | 3.37%         |
-| 14  | [Go](https://go.dev/)                                                 | 4.39%         |
-| 15  | [Free Pascal](https://www.freepascal.org/)                            | 4.55%         |
-| 16  | [Common Lisp](https://lisp-lang.org/)                                 | 4.72%         |
-| 17  | [Fortran](https://fortran-lang.org/)                                  | 8.31%         |
-| 18  | [Elixir](https://elixir-lang.org/docs.html)                           | 2.57%         |
-| 19  | [ALGOL 68](https://en.wikipedia.org/wiki/ALGOL_68)                    | 11.68%        |
-| 21  | [Kotlin](https://kotlinlang.org/)                                     | 6.58%         |
+| 1   | [sed](https://www.gnu.org/software/sed/manual/sed.html)               | 2.24%         |
+| 2   | [awk](https://www.gnu.org/software/gawk/manual/gawk.html)             | 1.59%         |
+| 3   | [vim](https://www.vim.org/)                                           | 2.37%         |
+| 4   | [jq](https://jqlang.github.io/jq/)                                    | 2.12%         |
+| 5   | [Perl](https://www.perl.org/)                                         | 4.50%         |
+| 6   | [bc](https://www.gnu.org/software/bc/manual/html_chapter/bc_toc.html) | 2.00%         |
+| 7   | [GNU APL](https://www.gnu.org/software/apl/)                          | 1.50%         |
+| 8   | [asm](https://en.wikipedia.org/wiki/Assembly_language)                | 7.49%         |
+| 9   | [SQLite](https://www.sqlite.org/docs.html)                            | 2.41%         |
+| 10  | [Bash](https://www.gnu.org/software/bash/manual/html_node/index.html) | 5.35%         |
+| 11  | [C](https://www.open-std.org/jtc1/sc22/wg14/)                         | 5.55%         |
+| 12  | [Effekt](https://effekt-lang.org/)                                    | 13.21%        |
+| 13  | [Ruby](https://www.ruby-lang.org/en/)                                 | 3.15%         |
+| 14  | [Go](https://go.dev/)                                                 | 4.11%         |
+| 15  | [Free Pascal](https://www.freepascal.org/)                            | 4.26%         |
+| 16  | [Common Lisp](https://lisp-lang.org/)                                 | 4.42%         |
+| 17  | [Fortran](https://fortran-lang.org/)                                  | 7.78%         |
+| 18  | [Elixir](https://elixir-lang.org/docs.html)                           | 2.40%         |
+| 19  | [ALGOL 68](https://en.wikipedia.org/wiki/ALGOL_68)                    | 10.94%        |
+| 21  | [Kotlin](https://kotlinlang.org/)                                     | 6.16%         |
+| 22  | [Lua](https://lua.org/docs.html)                                      | 6.35%         |
 
 ## Technical Details
 
