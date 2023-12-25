@@ -1,14 +1,14 @@
-.PHONY: all
-all: part1 part2
+.PHONY: All
+All: Part1 Part2
 
-.PHONY: part1
-part1:
+.PHONY: Part1
+Part1:
 	$(info Part 1:)
 	fpc part1.pas
 	./part1
 
-.PHONY: part2
-part2:
+.PHONY: Part2
+Part2:
 	$(info Part 2:)
 	fpc part2.pas
 	./part2

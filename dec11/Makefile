@@ -1,22 +1,22 @@
-.PHONY: all
-all: part1 part2
+.PHONY: All
+All: Part1 Part2
 
-.PHONY: part1
-part1: part1.elf
+.PHONY: Part1
+Part1: part1
 	$(info Part 1:)
-	./part1.elf input.txt
+	./part1 input.txt
 
-.PHONY: part2
-part2: part2.elf
+.PHONY: Part2
+Part2: part2
 	$(info Part 2:)
-	./part2.elf input.txt
+	./part2 input.txt
 
-%.elf: %.c common.c common.h
+%: %.c common.c common.h
 	gcc -Wall -Werror -Wextra -Wconversion -g -o $@ $^
 
 .PHONY: clean
 clean:
-	rm *.elf
+	rm part?
 
 .NOTPARALLEL:
 .SILENT:

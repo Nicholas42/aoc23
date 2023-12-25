@@ -2,11 +2,8 @@ aoc_cookie.txt
 *.history
 *.txt
 *.o
-*.elf
 *.mod
 dec19/.Random.seed
 
 # binaries
-dec15/part?
-dec17/part?
-dec21/part?
+dec*/part?
