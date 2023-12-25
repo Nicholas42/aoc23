@@ -21,5 +21,6 @@
   "Kotlin": "[Kotlin](https://kotlinlang.org/)",
   "Lua": "[Lua](https://lua.org/docs.html)",
   "Rust": "[Rust](https://www.rust-lang.org/)",
-  "Python": "[Python](https://docs.python.org/3/)"
+  "Python": "[Python](https://docs.python.org/3/)",
+  "Zig": "[Zig](https://ziglang.org/)"
 }
