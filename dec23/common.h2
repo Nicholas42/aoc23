@@ -1,0 +1,58 @@
+Free: char = '.';
+Forest: char = '#';
+Up: char = '^';
+Right: char = '>';
+Down: char = 'v';
+Left: char = '<';
+
+Pos: @value type = {
+  public x: size_t = 0;
+  public y: size_t = 0;
+  operator=: (out this, x_: size_t, y_: size_t) = {
+    x = x_;
+    y = y_;
+  }
+}
+
+Field: type == std::vector<std::string>;
+
+up: (origin: Pos) -> Pos = Pos(origin.x, origin.y - 1);
+down: (origin: Pos) -> Pos = Pos(origin.x, origin.y + 1);
+left: (origin: Pos) -> Pos = Pos(origin.x - 1, origin.y);
+right: (origin: Pos) -> Pos = Pos(origin.x + 1, origin.y);
+
+readFile: (filePath: std::filesystem::path) -> Field = {
+  file: std::ifstream = filePath;
+  _ = file;
+  ret: Field = ();
+
+  line: std::string = "";
+  while std::getline(file, line) {
+    ret.emplace_back(line);
+  }
+
+  return ret;
+}
+
+inRange: (field: Field, pos: Pos) -> bool = {
+  return pos.y >= 0ul && pos.y < field.size() && pos.x >= 0ul &&
+         pos.x < field[pos.y].size();
+}
+
+startPos: Pos = (1ul, 0ul);
+finalPos: (field: Field) -> Pos = Pos(field.back().size() - 2,
+                                      field.size() - 1);
+
+getNeighbors: (field: Field, origin: Pos) -> std::vector<Pos> = {
+  inOrder: std::vector<Pos> = (right(origin), down(origin), left(origin),
+                               up(origin));
+  ret: std::vector<Pos> = ();
+  for inOrder do (n) {
+    if (inRange(field, n) && field[n.y][n.x] != Forest) {
+      ret.push_back(n);
+    }
+  }
+  return ret;
+}
+
+// vi: commentstring=//\ %s ft=cpp2 shiftwidth=2
