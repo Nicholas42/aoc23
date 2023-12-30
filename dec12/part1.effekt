@@ -3,92 +3,10 @@ import mutable/array
 import io/async
 import text/string
 
-
-type Spring {
-  Good();
-  Bad();
-  Ugly()
-}
-
-def show(spring: Spring) : String = {
-  spring match {
-    case Good() => "."
-    case Bad() => "#"
-    case Ugly() => "?"
-  }
-}
-
-def show(sl : List[Spring]) : String = {
-  return sl.accumulate("") { (acc, elem) => acc ++ show(elem) }
-}
-
-effect Flip(): Boolean
-effect Fail[A](): A
-
-
-def splitL(str: String, sep: String): List[String] = str.split(sep).toListFixed()
-
-def headDefault[A](l: List[A], default: A): A = l match {
-  case Nil() => default
-  case Cons(a, rest) => a
-}
-
-def accumulate[A, B](l: List[A], acc: B){ op: (B, A) => B } : B = {
-  l match {
-    case Cons(x, xs) => accumulate(xs, op(acc, x)) { (b,a) => op(b,a) }
-    case _ => acc
-  }
-}
-
-record Problem (
-  springs: List[Spring],
-  sizes: List[Int]
-)
-
-def show(prob: Problem): String = {
-  val springs = prob.springs.show()
-  val sizes = prob.sizes.accumulate("") { (acc, elem) => acc ++ show(elem) ++ ", " }
-  return springs ++ " " ++ sizes
-}
-
-def collect[A, B](arr:  Array[A]) { f: A => Option[B] }: Array[B] = {
-  val ret = emptyArray[B]()
-  each(0, arr.size()) { index =>
-    val mapped = f(arr.unsafeGet(index))
-    mapped match {
-      case Some(a) => put(ret, ret.size(), a)
-      case None() => ()
-    }
-  }
-  return ret
-}
-
-def toListFixed[T](arr: Array[T]): List[T] = {
-  var ret = Nil[T]()
-  val size = arr.size()
-  each(0, size) { index =>
-    ret = Cons(arr.unsafeGet(size - index - 1), ret)
-  }
-
-  return ret
-}
+import common
 
 def parseNumberList(str: String): List[Int] = {
   return str.split(",").collect { inp => inp.toInt() }.toListFixed()
-}
-
-def parseSprings(str: String) : List[Spring] = {
-  str.split("").collect { char =>
-    if( char == ".") {
-      return Some(Good())
-    } else if( char == "#") {
-      return Some(Bad())
-    } else if( char == "?") {
-      return Some(Ugly())
-    } else {
-      return None()
-    }
-  }.toListFixed()
 }
 
 def parseProblem(line: String): Option[Problem] = {
@@ -100,49 +18,6 @@ def parseProblem(line: String): Option[Problem] = {
   return ret
 }
 
-def fitsGood(problem: Problem) : Option[List[Spring]] / Flip = {
-  problem match {
-    case Problem(Nil(), Nil()) => Some([])
-    case Problem(Cons(first, rest), numbers) =>
-      val good = first match {
-        case Good() => true
-        case Bad() => false
-        case Ugly() => do Flip()
-      }
-      if(good) {
-        fitsGood(Problem(rest, numbers)).map { l => Cons(Good(), l) }
-        } else {
-          fitsBad(Problem(rest, numbers), 1).map { l => Cons(Bad(), l) }
-        }
-
-        case _ => None()
-  }
-}
-
-def fitsBad(problem: Problem, badStreak: Int) : Option[List[Spring]] / Flip = {
-  problem match {
-    case Problem(Nil(), Nil()) => None()
-    case Problem(Nil(), Cons(streak, Nil())) => if(streak == badStreak) {Some([])} else {None()}
-
-    case Problem(Cons(first, rest), Cons(n, ns)) =>
-      val good = first match {
-        case Good() => true
-        case Bad() => false
-        case Ugly() => do Flip()
-      }
-      if(good && n == badStreak) {
-        fitsGood(Problem(rest, ns)).map { l => Cons(Good(), l) }
-        } else if( good.not() && badStreak < n) {
-          fitsBad(Problem(rest, Cons(n, ns)), badStreak + 1).map { l =>  Cons(Bad(), l) }
-          } else {
-            None()
-          }
-
-
-        case _ => None()
-  }
-}
-
 def program() =  {
   val file = do read("input.txt")
 
@@ -151,14 +26,8 @@ def program() =  {
 
   val problems = lines.collect{line => parseProblem(line)}.toListFixed()
   val result = problems.map { prob =>
-    try {
-      fitsGood(prob) match {
-        case Some(a) => 1
-        case _ => 0
-      }
-
-    } with Flip { () => resume(true)+ resume(false) }
-  }.accumulate(0) { (l,r) => l+r}
+    calculate(prob)
+  }.sum()
   println(result)
 }
 

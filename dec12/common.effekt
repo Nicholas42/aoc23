@@ -1,0 +1,198 @@
+module common
+
+import io/args
+import immutable/list
+import mutable/array
+import mutable/map
+import io/async
+import text/string
+
+
+type Spring {
+  Good();
+  Bad();
+  Ugly()
+}
+
+def show(spring: Spring) : String = {
+  spring match {
+    case Good() => "."
+    case Bad() => "#"
+    case Ugly() => "?"
+  }
+}
+
+def show(sl : List[Spring]) : String = {
+  return sl.accumulate("") { (acc, elem) => acc ++ show(elem) }
+}
+
+effect Flip(): Boolean
+effect Fail[A](): A
+
+def indices[A](l: List[A]) : List[Int] = {
+  var index = -1
+  l.map { _ => index = index + 1; index }
+}
+
+def max(l: List[Int]) : Int = {
+  l match {
+    case Cons(x, Nil()) => x
+    case Cons(x, xs) =>
+      val maxs = xs.max()
+      if(x > maxs) { x } else { maxs}
+
+    case Nil() => -1
+  }
+}
+
+
+def splitL(str: String, sep: String): List[String] = str.split(sep).toListFixed()
+
+def headDefault[A](l: List[A], default: A): A = l match {
+  case Nil() => default
+  case Cons(a, rest) => a
+}
+
+def accumulate[A, B](l: List[A], acc: B){ op: (B, A) => B } : B = {
+  l match {
+    case Cons(x, xs) => accumulate(xs, op(acc, x)) { (b,a) => op(b,a) }
+    case _ => acc
+  }
+}
+
+def sum(l: List[Int]) = l.accumulate(0) { (l,r) => l + r }
+
+record Problem (
+  springs: List[Spring],
+  sizes: List[Int]
+)
+
+def showImpl(prob: Problem): String = {
+  val springs = prob.springs.show()
+  val sizes = prob.sizes.accumulate("") { (acc, elem) => acc ++ show(elem) ++ ", " }
+  return springs ++ " " ++ sizes
+}
+
+def collect[A, B](list:  List[A]) { f: A => Option[B] }: List[B] = {
+  list match {
+    case Cons(x, xs) =>
+      val foo = f(x) match {
+        case Some(a) => [a]
+        case None() =>[]
+      }
+      foo.append(collect(xs) { f })
+        case Nil() => []
+  }
+}
+
+def collect[A, B](arr:  Array[A]) { f: A => Option[B] }: Array[B] = {
+  val ret = emptyArray[B]()
+  each(0, arr.size()) { index =>
+    val mapped = f(arr.unsafeGet(index))
+    mapped match {
+      case Some(a) => put(ret, ret.size(), a)
+      case None() => ()
+    }
+  }
+  return ret
+}
+
+def toListFixed[T](arr: Array[T]): List[T] = {
+  var ret = Nil[T]()
+  val size = arr.size()
+  each(0, size) { index =>
+    ret = Cons(arr.unsafeGet(size - index - 1), ret)
+  }
+
+  return ret
+}
+
+def parseSprings(str: String) : List[Spring] = {
+  str.split("").collect { char =>
+    if( char == ".") {
+      return Some(Good())
+    } else if( char == "#") {
+      return Some(Bad())
+    } else if( char == "?") {
+      return Some(Ugly())
+    } else {
+      return None()
+    }
+  }.toListFixed()
+}
+
+
+def consumeBad(l: List[Spring], number: Int, bad: Int, ugly: Int) : Tuple3[List[Spring], Int, Int]/ Fail = {
+  if(number == 0) {
+    l match {
+      case Nil() => (Nil(), bad, ugly)
+      case Cons(Ugly(), r) => (r, bad, ugly-1)
+      case Cons(Good(), r) => (r, bad, ugly)
+      case _ => do Fail()
+    }
+  }
+  else {
+    l match {
+      case Nil() => do Fail()
+      case Cons(Good(), _) => do Fail()
+      case Cons(Bad(), rem) => consumeBad(rem, number - 1, bad - 1, ugly)
+      case Cons(Ugly(), rem) => consumeBad(rem, number - 1, bad, ugly - 1)
+    }
+  }
+}
+
+def test(problem: Problem, neededBad: Int, remBad: Int, remUgly: Int) : Int / {Flip, Fail} = {
+  if (neededBad > remBad + remUgly || neededBad < remBad) {
+    do Fail()
+  }
+  val key = showImpl(problem)
+  problem match {
+    case Problem(Nil(), Nil()) => 1
+    case Problem(Nil(), _) => do Fail()
+
+    case Problem(Cons(Bad(), _), Nil()) => do Fail()
+    case Problem(_, Nil()) => 1
+
+    case Problem(Cons(spring, remSprings), Cons(n, ns)) =>
+      val (good, minusBad, minusUgly) = spring match {
+        case Good() => (true, 0, 0)
+        case Bad() => (false, 1, 0)
+        case Ugly() => (do Flip(), 0, 1)
+      }
+
+      if(good) {
+        val next = Problem(remSprings,  Cons(n, ns))
+        val res = test(next, neededBad, remBad, remUgly - minusUgly)
+        res
+      } else {
+        val (springs, bad, ugly) = consumeBad(remSprings, n-1, remBad - minusBad, remUgly - minusUgly)
+        val next = Problem(springs, ns)
+        test(next, neededBad - n, bad, ugly)
+      }
+  }
+}
+
+def countKinds(l: List[Spring], good: Int, bad: Int, ugly: Int) : Tuple3[Int,Int,Int] = {
+  l match {
+    case Nil() => (good, bad, ugly)
+    case Cons(spring, r) =>
+      spring match {
+        case Good() => countKinds(r, good+1, bad, ugly)
+        case Bad() => countKinds(r, good, bad+1, ugly)
+        case Ugly() =>  countKinds(r, good, bad, ugly+1)
+      }
+  }
+}
+
+def calculate(prob: Problem): Int = {
+  try{
+    val (good, bad, ugly) = countKinds(prob.springs, 0, 0, 0)
+    val neededBad = prob.sizes.accumulate(0) { (l,r) => l+r }
+    try {
+      test(prob, neededBad, bad, ugly)
+      1
+    } with Fail[A] { () => 0 }
+  }
+  with Flip { () => resume(true)+ resume(false) }
+}
+// vi: tabstop=2 commentstring=//%s ft=scala

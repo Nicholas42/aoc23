@@ -5,106 +5,11 @@ import mutable/map
 import io/async
 import text/string
 
-
-type Spring {
-  Good();
-  Bad();
-  Ugly()
-}
-
-def show(spring: Spring) : String = {
-  spring match {
-    case Good() => "."
-    case Bad() => "#"
-    case Ugly() => "?"
-  }
-}
-
-def show(sl : List[Spring]) : String = {
-  return sl.accumulate("") { (acc, elem) => acc ++ show(elem) }
-}
-
-effect Flip(): Boolean
-effect Fail[A](): A
-
-
-def splitL(str: String, sep: String): List[String] = str.split(sep).toListFixed()
-
-def headDefault[A](l: List[A], default: A): A = l match {
-  case Nil() => default
-  case Cons(a, rest) => a
-}
-
-def accumulate[A, B](l: List[A], acc: B){ op: (B, A) => B } : B = {
-  l match {
-    case Cons(x, xs) => accumulate(xs, op(acc, x)) { (b,a) => op(b,a) }
-    case _ => acc
-  }
-}
-
-record Problem (
-  springs: List[Spring],
-  sizes: List[Int]
-)
-
-def show(prob: Problem): String = {
-  val springs = prob.springs.show()
-  val sizes = prob.sizes.accumulate("") { (acc, elem) => acc ++ show(elem) ++ ", " }
-  return springs ++ " " ++ sizes
-}
-
-def collect[A, B](list:  List[A]) { f: A => Option[B] }: List[B] = {
-  list match {
-    case Cons(x, xs) =>
-      val foo = f(x) match {
-        case Some(a) => [a]
-        case None() =>[]
-      }
-      foo.append(collect(xs) { f })
-        case Nil() => []
-  }
-}
-
-def collect[A, B](arr:  Array[A]) { f: A => Option[B] }: Array[B] = {
-  val ret = emptyArray[B]()
-  each(0, arr.size()) { index =>
-    val mapped = f(arr.unsafeGet(index))
-    mapped match {
-      case Some(a) => put(ret, ret.size(), a)
-      case None() => ()
-    }
-  }
-  return ret
-}
-
-def toListFixed[T](arr: Array[T]): List[T] = {
-  var ret = Nil[T]()
-  val size = arr.size()
-  each(0, size) { index =>
-    ret = Cons(arr.unsafeGet(size - index - 1), ret)
-  }
-
-  return ret
-}
+import common
 
 def parseNumberList(str: String): List[Int] = {
   val multiple = (str ++ ",").repeat(5)
   return multiple.split(",").collect { inp => inp.toInt() }.toListFixed()
-}
-
-def parseSprings(str: String) : List[Spring] = {
-  val multiple = (str ++ "?").repeat(5)
-  multiple.split("").collect { char =>
-    if( char == ".") {
-      return Some(Good())
-    } else if( char == "#") {
-      return Some(Bad())
-    } else if( char == "?") {
-      return Some(Ugly())
-    } else {
-      return None()
-    }
-  }.toListFixed().reverse().drop(1).reverse()
 }
 
 def parseProblem(line: String): Option[Problem] = {
@@ -116,101 +21,31 @@ def parseProblem(line: String): Option[Problem] = {
   return ret
 }
 
-def consumeBad(l: List[Spring], number: Int, bad: Int, ugly: Int) : Tuple3[List[Spring], Int, Int]/ Fail = {
-  if(number == 0) {
-    l match {
-      case Nil() => (Nil(), bad, ugly)
-      case Cons(Ugly(), r) => (r, bad, ugly-1)
-      case Cons(Good(), r) => (r, bad, ugly)
-      case _ => do Fail()
-    }
-  }
-  else {
-    l match {
-      case Nil() => do Fail()
-      case Cons(Good(), _) => do Fail()
-      case Cons(Bad(), rem) => consumeBad(rem, number - 1, bad - 1, ugly)
-      case Cons(Ugly(), rem) => consumeBad(rem, number - 1, bad, ugly - 1)
-    }
-  }
-}
-
-def recordFail(problem: Problem, cache: Map[String, Boolean]) : Unit / {Fail} = {
-  cache.update(show(problem), false)
-  do Fail()
-}
-
-def test(problem: Problem, cache: Map[String, Int], neededBad: Int, remBad: Int, remUgly: Int) : Int / {Flip, Fail} = {
-  if (neededBad > remBad + remUgly || neededBad < remBad) {
-    do Fail()
-  }
-  val key = show(problem)
-  get(cache, key) match {
-    case None() =>
-      problem match {
-        case Problem(Nil(), Nil()) => 1
-        case Problem(Nil(), _) => do Fail()
-
-        case Problem(Cons(Bad(), _), Nil()) => do Fail()
-        case Problem(_, Nil()) => 2^remUgly
-
-        case Problem(Cons(spring, remSprings), Cons(n, ns)) =>
-          val (good, minusBad, minusUgly) = spring match {
-            case Good() => (true, 0, 0)
-            case Bad() => (false, 1, 0)
-            case Ugly() => (do Flip(), 0, 1)
-          }
-
-            if(good) {
-              val next = Problem(remSprings,  Cons(n, ns))
-              val res = test(next ,cache, neededBad, remBad, remUgly - minusUgly)
-              cache.update(show(next), res)
-            } else {
-              val (springs, bad, ugly) = consumeBad(remSprings, n-1, remBad - minusBad, remUgly - minusUgly)
-              val next = Problem(springs, ns)
-              try {
-              test(next , cache, neededBad - n, bad, ugly)
-              } with Fail[A] { () => }
-              cache.update(show(next), true)
-            }
+def multiply(initialProblem: Problem, currentSprings: List[Spring], remainingSizes: List[Int], count: Int) : Int = {
+  if (count == 0) {
+    val res = calculate(Problem(currentSprings, remainingSizes))
+    res
+  } else {
+    val good = indices(Cons(0, remainingSizes)).map { index =>
+      val first = calculate(Problem(currentSprings, remainingSizes.take(index)))
+      if (first > 0) {
+        val second = multiply(initialProblem, initialProblem.springs, remainingSizes.drop(index), count - 1)
+        first * second
+      } else {
+        0
       }
-            case Some(v) => if(v) { () } else { () }
+    }.sum()
+    val bad = multiply(initialProblem, currentSprings.append(Cons(Bad(), initialProblem.springs)), remainingSizes, count - 1)
+    good + bad
   }
 }
 
-def countKinds(l: List[Spring], good: Int, bad: Int, ugly: Int) : Tuple3[Int,Int,Int] = {
-  l match {
-    case Nil() => (good, bad, ugly)
-    case Cons(spring, r) =>
-      spring match {
-        case Good() => countKinds(r, good+1, bad, ugly)
-        case Bad() => countKinds(r, good, bad+1, ugly)
-        case Ugly() =>  countKinds(r, good, bad, ugly+1)
-      }
-  }
-}
-
-def calculate(prob: Problem): Int = {
-  try{
-    val (good, bad, ugly) = countKinds(prob.springs, 0, 0, 0)
-    val neededBad = prob.sizes.accumulate(0) { (l,r) => l+r }
-    try {
-      val map = emptyMap[String, Int]()
-      test(prob, map, neededBad, bad, ugly)
-      1
-    } with Fail[A] { () => 0 }
-  }
-  with Flip { () => resume(true)+ resume(false) }
-}
 
 def program(lines: List[String]) =  {
   val problems = lines.collect{line => parseProblem(line)}
   val result = problems.map { prob =>
-    val foo = calculate(prob)
-
-    println(show(prob))
-    foo
-  }.accumulate(0) { (l,r) => l+r}
+    multiply(prob, prob.springs, prob.sizes, 4)
+  }.sum()
 
   println(result)
 }

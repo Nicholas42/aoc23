@@ -6,4 +6,4 @@ Makefile -linguist-detectable
 
 *.sql linguist-detectable
 dec14/go.mod -linguist-detectable
-dec12/part2 -linguist-detectable
+dec12/part2.js -linguist-detectable
