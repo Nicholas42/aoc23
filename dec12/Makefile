@@ -14,5 +14,13 @@ Part2:
 	# Poor man's parallelization
 	parallel -a input.txt ./part2.js dummy | paste -sd+ | bc
 
+
+.PHONY: Part2.cpp
+Part2.cpp: part2
+	./part2 input.txt
+
+part2: part2.cpp
+	clang++ -std=c++20 part2.cpp -o part2 -g -Wall -Wextra -pedantic -Werror -O3 -ltbb
+
 .NOTPARALLEL:
 .SILENT:
