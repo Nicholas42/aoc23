@@ -1,0 +1,113 @@
+#include "common.h2"
+
+Graph: type == std::vector<std::vector<Edge>>;
+
+Edge: @value type = {
+  public target: size_t = 0;
+  public length: size_t = 0;
+  operator=: (out this, target_: size_t, length_: size_t) = {
+    target = target_;
+    length = length_;
+  }
+}
+
+walkFrom: (field: Field, copy lastNeighbor: Pos, copy current: Pos) -> Edge = {
+  neighbors: std::vector<Pos> = field.getNeighbors(current);
+  length := 1ul;
+
+  while neighbors.size() == 2 next length++ {
+    if (neighbors.front() == lastNeighbor) {
+      lastNeighbor = std::exchange(current, neighbors.back());
+    } else {
+      lastNeighbor = std::exchange(current, neighbors.front());
+    }
+
+    neighbors = field.getNeighbors(current);
+  }
+
+  return Edge(field.makeIndex(current), length);
+}
+
+makeIndex: (field: Field, pos: Pos) -> size_t = {
+  return pos.y * field[0].size() + pos.x;
+}
+
+reverseIndex: (field: Field, index: size_t) -> Pos = {
+  width := field[0].size();
+  return Pos(index % width, index / width);
+}
+
+generateGraph: (field: Field) -> Graph = {
+  graph: Graph = ();
+  graph.resize(field.size() * field[0].size());
+
+  (copy y := 0ul)
+    while y < field.size() next y++ {
+      (copy x := 0ul)
+        while x < field[y].size() next x++ {
+      if (field[y][x] == Forest) {
+        continue;
+      }
+      cur: Pos = (x, y);
+      neighbors := field.getNeighbors(cur);
+
+      if (neighbors.size() == 2) {
+        continue;
+      }
+
+      index := field.makeIndex(cur);
+
+      for neighbors do (n) {
+        edge := field.walkFrom(cur, n);
+        graph[index].push_back(edge);
+      }
+        }
+    }
+
+  return graph;
+}
+
+visit: (graph: Graph, inout visited: std::vector<char>, current: size_t,
+        length: size_t, endIndex: size_t) -> size_t = {
+  if (current == endIndex) {
+    return length;
+  }
+
+  visited[current] = true;
+  max_length := 0ul;
+
+  for graph[current] do (edge) {
+    if(visited[edge.target]) {
+      continue;
+    }
+
+    new_length := visit(graph, visited, edge.target, length + edge.length,
+                        endIndex);
+
+    max_length = std::max(max_length, new_length);
+  }
+
+  visited[current] = false;
+
+  return max_length;
+}
+
+findMaxPath: (field: Field) -> size_t = {
+  start := field.makeIndex(Pos(1, 0));
+  end := field.makeIndex(Pos(field.back().ssize() - 2, field.ssize() - 1));
+  graph := field.generateGraph();
+
+  visited: std::vector<char> = ();
+  visited.resize(graph.size(), false);
+
+  ret := visit(graph, visited, start, 0, end);
+  _ = visited;
+  return ret;
+}
+
+main: (args) = {
+  input := readFile("input.txt");
+  std::cout << std::format("{}\n", findMaxPath(input));
+}
+
+// vi: commentstring=//\ %s ft=cpp2 shiftwidth=2

@@ -22,5 +22,6 @@
   "Lua": "[Lua](https://lua.org/docs.html)",
   "Rust": "[Rust](https://www.rust-lang.org/)",
   "Python": "[Python](https://docs.python.org/3/)",
+  "C++2": "[C++2](https://github.com/hsutter/cppfront/tree/main)",
   "Zig": "[Zig](https://ziglang.org/)"
 }

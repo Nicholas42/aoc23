@@ -5,5 +5,10 @@ aoc_cookie.txt
 *.mod
 dec19/.Random.seed
 
+# Generated files
+dec23/cpp2util.h
+dec23/cppfront
+dec23/*cpp
+
 # binaries
 dec*/part?

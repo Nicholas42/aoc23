@@ -1,0 +1,84 @@
+#include "common.h2"
+
+namespace std {
+template <> struct hash<Pos> {
+  std::size_t operator()(const Pos &pos) const noexcept {
+    const auto h1 = std::hash<size_t>{}(pos.x);
+    const auto h2 = std::hash<size_t>{}(pos.y);
+    return h1 ^ (h2 << 1);
+  }
+};
+} // namespace std
+
+computeNextNeighbor: (field: Field, origin: Pos,
+                      prevNeighbor: Pos) -> std::optional<Pos> = {
+  tile := field[origin.y][origin.x];
+  if tile == Free {
+    (copy last := origin)
+      for field.getNeighbors(origin) do (n) {
+        if last == prevNeighbor {
+          return n;
+        }
+        last = n;
+      }
+
+    return ();
+  }
+
+  // switch seems unsupported at the moment...
+  if origin != prevNeighbor {
+    return ();
+  }
+  if tile == Up {
+    return up(origin);
+  }
+  if tile == Down {
+    return down(origin);
+  }
+  if tile == Left {
+    return left(origin);
+  }
+  return right(origin);
+}
+
+iterate: (field: Field, inout path: std::vector<Pos>,
+          inout visited: std::unordered_set<Pos>, prevNeighbor: Pos) -> Pos = {
+  curPos := path.back();
+  nextNeighbor: std::optional<Pos> = (prevNeighbor);
+  do {
+    nextNeighbor = computeNextNeighbor(field, curPos, nextNeighbor*);
+  } while nextNeighbor && !visited.insert(nextNeighbor*).second;
+
+  if nextNeighbor {
+    path.push_back(nextNeighbor*);
+    return nextNeighbor*;
+  } else {
+    path.pop_back();
+    visited.erase(curPos);
+    return curPos;
+  }
+}
+
+findMaxPath: (field: Field) -> size_t = {
+  target := field.finalPos();
+  path: std::vector<Pos> = (startPos);
+  visited: std::unordered_set<Pos> = (startPos);
+  _ = visited;
+  longestPath := 0ul;
+
+  while !path.empty() next startPos = iterate(field, path, visited, startPos) {
+    if startPos == target {
+      longestPath = std::max(longestPath, path.size() - 1);
+    }
+  }
+
+  return longestPath;
+}
+
+main: (args) = {
+  input := readFile("input.txt");
+
+  std::cout << findMaxPath(input) << '\n';
+}
+
+// vi: commentstring=//\ %s ft=cpp2 shiftwidth=2

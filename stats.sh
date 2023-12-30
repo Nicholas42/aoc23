@@ -27,6 +27,7 @@ fi
 
 BC=$(collect_manual bc -- **/*.bc)
 ALGOL=$(collect_manual algol -- **/*.a68)
+CXX2=$(collect_manual "C++2" -- **/*.cpp2)
 
 $LINGUIST --json --breakdown |
     jq -r \
@@ -50,5 +51,5 @@ $LINGUIST --json --breakdown |
         | .[]
         ' \
          --slurpfile "renamed" "languages.json" \
-        --jsonargs "$BC" "$ALGOL"|
+        --jsonargs "$BC" "$ALGOL" "$CXX2" |
     prettier --parser markdown
