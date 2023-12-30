@@ -41,12 +41,12 @@ $LINGUIST --json --breakdown |
                     | tostring
                     | match("\\d*\\.\\d\\d")
                     | .string,
-                day: .files[0] | match("dec0?(\\d+)") | .captures[0].string | tonumber
+                day: .files[0] | match("dec(0?\\d+)") | .captures[0].string
             }
         )
         | to_entries
         | sort_by(.value.day)
-        | map("|\(.value.day) | \($renamed[0][.key] // .key) | \(.value.percentage)%|")
+        | map("|[dec\(.value.day)/](\(.value.day | tonumber)) | \($renamed[0][.key] // .key) | \(.value.percentage)%|")
         | ["|Day | Language | Share of code |", "| --- | --- | --- | --- |"] + .
         | .[]
         ' \
