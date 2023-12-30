@@ -46,7 +46,7 @@ $LINGUIST --json --breakdown |
         )
         | to_entries
         | sort_by(.value.day)
-        | map("|[dec\(.value.day)/](\(.value.day | tonumber)) | \($renamed[0][.key] // .key) | \(.value.percentage)%|")
+        | map("|[\(.value.day | tonumber)](dec\(.value.day)/) | \($renamed[0][.key] // .key) | \(.value.percentage)%|")
         | ["|Day | Language | Share of code |", "| --- | --- | --- | --- |"] + .
         | .[]
         ' \
